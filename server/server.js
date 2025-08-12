@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const port = process.env.PORT || 5000; // Use an environment variable for the port
+const port = 5000;
 
 // Middleware
 app.use(cors());
@@ -13,36 +13,18 @@ app.use(bodyParser.json());
 
 // Database connection
 const db = mysql.createConnection({
-  host: process.env.DB_HOST || 'mysql', // Use 'mysql' to connect to MySQL container
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'password',
-  database: process.env.DB_NAME || 'test_db',
+  host: 'localhost',
+  user: 'root',
+  password: 'password',
+  database: 'test_db',
 });
 
 db.connect((err) => {
   if (err) {
-    console.error('Database connection failed:', err.stack);
+    console.error('Database connection failed:', err);
     process.exit(1);
   }
   console.log('Database connected.');
-
-  // Initialize database with `users` table if it doesn't exist
-  const createUsersTable = `
-    CREATE TABLE IF NOT EXISTS users (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) NOT NULL UNIQUE,
-      role ENUM('Admin', 'User') NOT NULL
-    )
-  `;
-
-  db.query(createUsersTable, (err, results) => {
-    if (err) {
-      console.error('Failed to create users table:', err.stack);
-      process.exit(1);
-    }
-    console.log('Users table initialized or already exists.');
-  });
 });
 
 // API Routes
